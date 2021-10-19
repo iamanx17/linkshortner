@@ -1,0 +1,24 @@
+{
+  "name": "url_shortner_api",
+  "version": "1.0.0",
+  "description": "To short url ",
+  "main": "server.js",
+  "scripts": {
+    "start":"nodemon app.js"
+  },
+  "keywords": [
+    "Express",
+    "RestAPI",
+    "MongoDB",
+    "Mongoose",
+    "Notes"
+  ],
+  "author": "iamanx17",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongoose": "^6.0.11",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.13"
+  }
+}
