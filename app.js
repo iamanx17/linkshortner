@@ -1,36 +1,49 @@
-const express = require("express");
-const mongoose = require("mongoose");
 const path = require("path");
-const logger = require("morgan");
-const app = express();
-const dbConfig = require("./config/db.js");
 
-app.use(express.urlencoded({ extended: true }));
+const express = require("express");
+const session = require("express-session");
+const mongodbSession = require("connect-mongodb-session")(session);
+const nunjucks = require("nunjucks");
+
+const util = require("./utils/db");
+
+const PORT = process.env.PORT || 3000;
+const mongooseURL = "mongodb://localhost:27017/linkShortner";
+
+const app = express();
+
+app.set("view engine", "njk");
+
+nunjucks.configure("views", {
+  autoescape: true,
+  express: app,
+});
+
+const store = new mongodbSession({
+  uri: mongooseURL,
+  collection: "session",
+});
+
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-mongoose.connect(dbConfig.url);
-
-mongoose.connection.on("error", () => {
-  console.log("Could not connect to the database. Exiting now...");
-  process.exit();
-});
-
-mongoose.connection.once("open", () =>
-  console.log("Successfully connected to the database")
+app.use(
+  session({
+    secret: "gxdp8-kygcw-m4fgh-pqp3d-brdjg",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
 );
 
-const apiRoute = require("./app/routes/urlshort.routes");
-const urlredirectRoute = require("./app/routes/urlredirect.routes");
+app.use(require(path.join(__dirname, "./routes/shorturl")));
+app.use(require(path.join(__dirname, "./routes/api")));
 
-app.use(logger("dev"));
-app.use("/api", apiRoute);
-app.use("/", urlredirectRoute);
-
-app.use((req, res) => {
-  res.status(404).send({
-    error404: "This page is lost in horizon!",
-  });
+app.use((req, res, next) => {
+  res.send("<h1>This page is lost in event horizon</h1>");
 });
 
-const port =3000;
-app.listen(port, () => console.log(`Server is listening on port ${port}`));
+app.listen(PORT, async () => {
+  util.connectDB(mongooseURL);
+  console.log("server started successfully at port:", PORT);
+});

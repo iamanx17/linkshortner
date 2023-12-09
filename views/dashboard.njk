@@ -1,0 +1,40 @@
+{% extends "base.njk" %}
+
+{% block dashboard %}
+active
+    
+{% endblock %}
+
+{% block content %}
+    <div class='container my-5'>
+        {% if api_key %}
+            <div class="alert alert-primary" role="alert">
+  Your api key is: {{api_key}}
+            </div>
+
+        {% endif %}
+    </div>
+
+    <div class="container my-5">
+
+        {#  #}
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            {% for shortlink in shortUrlList %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#abc" aria-expanded="false" aria-controls="flush-collapseOne">
+       The original url is:{{shortlink.entity.url}}, And the shorturl is {{shortlink.entity.shortUrl}} 
+                        </button>
+                    </h2>
+                    <div id="abc" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">Json format: <code>{{shortlink.entityString}}</code>
+                            <button class='btn btn-secondary'>update</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}
